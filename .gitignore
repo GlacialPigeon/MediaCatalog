@@ -1,0 +1,80 @@
+# -----------------------------------------------------------------------------
+# MediaCatalog / MediaKatalog
+# Runtime state, generated files, local dependencies, and development artifacts
+# -----------------------------------------------------------------------------
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Runtime data
+/data/
+/logs/
+/reports/
+
+# Runtime / user-specific source lists
+/[Pp]ath[Ll]ists/
+
+# Local FFmpeg / FFprobe distribution and binaries
+/ffmpeg/
+
+# SQLite temporary / sidecar files if a database is ever placed elsewhere
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+
+# Generated logs / diagnostics
+*.log
+*_excluded.txt
+
+# Build / packaging output
+/build/
+/dist/
+/release/
+/releases/
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# Temporary / partial files
+*.partial
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Local tree/listing helper files
+/tree
+/tree.txt
+
+# IDE / editor metadata
+.vscode/
+.idea/
+.vs/
+*.code-workspace
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
