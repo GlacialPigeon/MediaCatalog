@@ -136,7 +136,7 @@ relative to the MediaCatalog application folder.
 For example:
 
 ```text
-MediaKatalog_2.1.2\
+MediaCatalog_2.1.2\
 └── ffmpeg\
     └── bin\
         └── ffprobe.exe
@@ -175,13 +175,13 @@ MediaCatalog checks the dependency again when Excel output is requested, so inst
 The release folder name is:
 
 ```text
-MediaKatalog_2.1.2
+MediaCatalog_2.1.2
 ```
 
 A normal installation can look like this:
 
 ```text
-MediaKatalog_2.1.2\
+MediaCatalog_2.1.2\
 │   main.py
 │   README.md
 │
@@ -302,13 +302,13 @@ Never auto-created by MediaCatalog. The required FFprobe executable must be supp
 1. Place MediaCatalog in its final folder, for example:
 
    ```text
-   C:\Tools\MediaKatalog_2.1.2
+   C:\Tools\MediaCatalog_2.1.2
    ```
 
 2. Place FFprobe at:
 
    ```text
-   C:\Tools\MediaKatalog_2.1.2\ffmpeg\bin\ffprobe.exe
+   C:\Tools\MediaCatalog_2.1.2\ffmpeg\bin\ffprobe.exe
    ```
 
 3. Optionally install XlsxWriter for Excel reports:
@@ -320,7 +320,7 @@ Never auto-created by MediaCatalog. The required FFprobe executable must be supp
 4. Start MediaCatalog:
 
    ```powershell
-   cd C:\Tools\MediaKatalog_2.1.2
+   cd C:\Tools\MediaCatalog_2.1.2
    py -3 main.py
    ```
 
@@ -914,7 +914,7 @@ The application source, locale files, README, and `.gitignore` should remain tra
 Verify that this exists:
 
 ```text
-MediaKatalog_2.1.2\ffmpeg\bin\ffprobe.exe
+MediaCatalog_2.1.2\ffmpeg\bin\ffprobe.exe
 ```
 
 If using a DLL-based FFmpeg build, verify the required DLLs are also present in the same distribution layout.
