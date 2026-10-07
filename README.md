@@ -660,7 +660,7 @@ MediaCatalog treats inaccessible sources as unavailable, rather than marking all
 
 ---
 
-## 10. Release Notes — v3.0.2
+## 10. Release Notes - v3.0.2
 
 MediaCatalog 3.0.2 adds Linux support alongside Windows.
 
