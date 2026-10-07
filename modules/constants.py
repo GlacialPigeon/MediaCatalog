@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 APP_NAME = "MediaCatalog"
-PROGRAM_VERSION = "2.1.2"
+PROGRAM_VERSION = "3.0.2"
 APP_AUTHOR = "GlacialPigeon"
 APP_AUTHOR_URL = "https://github.com/GlacialPigeon"
 

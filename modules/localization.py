@@ -242,7 +242,6 @@ REQUIRED_CANONICAL_KEYS = frozenset({
     'startup.details',
     'startup.logging_unavailable_warning',
     'startup.python_too_old',
-    'startup.windows_only',
 })
 
 

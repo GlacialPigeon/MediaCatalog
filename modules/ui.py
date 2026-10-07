@@ -797,7 +797,7 @@ class ConsoleUI:
         self.clear_screen(); print(ui_header("label.import_sources"))
         raw = self._prompt("\n" + t("source.import.path_prompt") + " ", "IMPORT_SOURCE_FILE_PATH")
         if not raw: return
-        path = Path(strip_surrounding_quotes(raw))
+        path = Path(self.platform.resolve_user_path(raw))
         self.logger.info("UI", f"Source import file selected path={str(path)!r}")
         if not path.is_file():
             print("\n" + t("source.import.file_not_found", path=path)); self._pause(); return

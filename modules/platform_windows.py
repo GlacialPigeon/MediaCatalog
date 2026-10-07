@@ -458,6 +458,11 @@ class WindowsPlatform:
     def normalize_path(self, value: str) -> str:
         return ntpath.normpath(value)
 
+    def resolve_user_path(self, value: str) -> str:
+        stripped = _strip_surrounding_quotes(value)
+        expanded = os.path.expanduser(stripped)
+        return ntpath.normpath(ntpath.abspath(expanded))
+
     def resolve_source(self, raw_path: str, logger: RunLogger) -> SourceDescriptor:
         original = _strip_surrounding_quotes(raw_path)
         if not original:

@@ -1,158 +1,93 @@
-# MediaCatalog 2.1.2
+# MediaCatalog 3.0.2
 
-Local Windows media cataloging, FFprobe analysis, and report generation.
+Catalog your local media, analyze it with FFprobe, and generate reports. Runs on Windows and Linux.
 
 **Author:** GlacialPigeon  
 **GitHub:** https://github.com/GlacialPigeon
 
 ---
 
-## Overview
+## 1. Overview
 
-MediaCatalog scans one or more media sources, analyzes video files with FFprobe, stores the resulting catalog in SQLite, and generates Excel, JSON, and TXT reports.
+MediaCatalog is a local media cataloging app for **Windows and Linux**.
 
-The application is designed for local and network media libraries and keeps the catalog locally. It supports local drives, UNC shares, mapped drives, and Windows Network Shortcuts, with source normalization so the same storage is not accidentally cataloged multiple times through different aliases.
+It scans your local and network media sources, analyzes video files with **FFprobe**, keeps a persistent catalog on your machine, and generates **Excel, JSON, and TXT reports**.
 
-MediaCatalog 2.1.2 is the modular Windows release based on the v2 architecture.
+It's built with large libraries in mind, and it doesn't need any cloud service.
 
----
+### Main features
 
-## Main features
-
-- Local Windows application; no cloud service is required.
-- Persistent SQLite media catalog.
-- Normal incremental scanning with reuse of unchanged catalog data.
-- Force Reprobe for all configured sources or one selected source.
-- Multi-source scanning with per-source results and final aggregate statistics.
-- FFprobe worker pool with configurable workers, timeout, and retries.
-- Source support for:
-  - local folders and drives,
-  - UNC paths,
-  - mapped network drives,
-  - Windows Network Shortcuts / `.lnk` targets.
-- Canonical network-source storage using UNC paths.
-- Source duplicate and verified nested-source detection.
-- Persistent tracking of missing media files.
-- Structured media metadata including container, video, audio, subtitle, codec, resolution, pixel format, bit depth, color/HDR, language, duration, bitrate, and related stream metadata.
-- Excel, JSON, and TXT reports.
-- Report scopes:
-  - all sources combined,
-  - all sources as separate reports,
-  - one selected source.
-- English and Slovenian UI (`en-US`, `sl-SI`).
-- Configurable logging levels.
-- Strict configuration validation and recovery.
-- SQLite corruption recovery with preservation of the damaged database and available WAL/SHM sidecars.
-- Single-instance protection on Windows.
-- Deterministic build fingerprint recorded in every session log.
+- Works on Windows and Linux
+- Local and network media sources
+- Incremental Normal Scan that reuses cached metadata
+- Force Reprobe to reanalyze media
+- Scanning of multiple sources at once
+- FFprobe analysis of video, audio, subtitles, codecs, resolution, HDR, languages, duration, bitrate, and other stream metadata
+- Source normalization and duplicate detection
+- Safe handling of sources that are temporarily unavailable
+- Excel, JSON, and TXT reports
+- English and Slovenian interface
+- Adjustable FFprobe workers, timeout, and retries
+- Adjustable logging levels
 
 ---
 
-## v2.1.2 release changes
+## 2. Requirements & Installation
 
-v2.1.2 is a focused maintenance release.
-
-### Scan dashboard rendering
-
-Multi-source **Normal Scan** and **Force Reprobe All** now keep completed source results append-only:
-
-- each completed source is printed exactly once,
-- previously completed source blocks are not redrawn,
-- live refresh updates do not create duplicate output,
-- live-area cleanup no longer adds blank lines to terminal scrollback,
-- the final `SCAN COMPLETE` / `SCAN STOPPED` section remains appended below the completed source history.
-
-Single-source Force Reprobe behavior remains unchanged.
-
-### FFprobe version logging
-
-FFprobe validation now keeps both forms of the version:
-
-- **Short version** for compact UI/log display, for example:
-
-  ```text
-  ffmpeg-9.0.2-full_build
-  ```
-
-- **Full version** containing the complete original first line returned by `ffprobe -version`, for example:
-
-  ```text
-  ffprobe version 9.0.2-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers
-  ```
-
-The full version is stored without shortening the first line.
-
----
-
-## Platform
-
-MediaCatalog 2.1.2 currently uses the Windows platform adapter and is intended to be run on Windows.
-
-`main.py` starts the Windows implementation when `sys.platform == "win32"`.
-
-### Validated v2.1.2 environment
-
-The release acceptance run was performed with:
+MediaCatalog is distributed as a single archive:
 
 ```text
-Windows 11
-Python 3.14.7
-FFprobe 9.0.2 full_build
-XlsxWriter 3.2.9
+MediaCatalog-3.0.2.zip
 ```
 
-These versions describe the validated release environment; they are not a claim that no other compatible versions can work.
+Extract it to a folder you plan to keep before running the app.
 
----
+### Windows
 
-## Requirements
+#### Python
 
-### Python
+You'll need Python 3.11.
 
-A Windows Python installation is required when running MediaCatalog from source.
-
-Start the application with either:
+Start MediaCatalog with:
 
 ```powershell
 py -3 main.py
 ```
 
-or:
+or, if Python is directly on your `PATH`:
 
 ```powershell
 python main.py
 ```
 
-### FFprobe
+#### FFmpeg / FFprobe
 
-MediaCatalog expects FFprobe at exactly:
+MediaCatalog uses `ffprobe.exe` to analyze media.
+
+You can grab a prebuilt Windows FFmpeg package that includes `ffprobe.exe` here:
+
+[Gyan FFmpeg Builds](https://www.gyan.dev/ffmpeg/builds/)
+
+If you'd rather build FFmpeg yourself, the official source repository is here:
+
+[FFmpeg/FFmpeg on GitHub](https://github.com/FFmpeg/FFmpeg)
+
+MediaCatalog looks for FFprobe in this location:
 
 ```text
-ffmpeg\bin\ffprobe.exe
-```
-
-relative to the MediaCatalog application folder.
-
-For example:
-
-```text
-MediaCatalog_2.1.2\
+MediaCatalog\
 └── ffmpeg\
     └── bin\
         └── ffprobe.exe
 ```
 
-MediaCatalog does **not** download or create the `ffmpeg` directory.
+MediaCatalog doesn't download FFmpeg for you.
 
-At startup, MediaCatalog validates FFprobe and the command-line capabilities required by the application. If FFprobe is missing or does not provide the required functionality, scan operations are blocked.
+If your FFmpeg build needs extra DLL files, keep everything in the layout that the distribution came with.
 
-If the chosen FFmpeg build uses DLL dependencies, keep the required DLLs next to `ffprobe.exe` as supplied by that FFmpeg distribution.
+#### XlsxWriter
 
-A full FFmpeg distribution may also contain `ffmpeg.exe` and `ffplay.exe`; MediaCatalog itself uses `ffprobe.exe` for media analysis.
-
-### XlsxWriter
-
-`XlsxWriter` is optional and is only required for Excel (`.xlsx`) reports.
+XlsxWriter is only needed for Excel (`.xlsx`) reports.
 
 Install it with:
 
@@ -160,206 +95,108 @@ Install it with:
 py -3 -m pip install XlsxWriter
 ```
 
+or:
+
+```powershell
+python -m pip install XlsxWriter
+```
+
 Without XlsxWriter:
 
-- JSON reports continue to work,
-- TXT reports continue to work,
-- Excel export is unavailable.
-
-MediaCatalog checks the dependency again when Excel output is requested, so installing XlsxWriter while the application is open does not require restarting MediaCatalog.
+- JSON reports still work
+- TXT reports still work
+- Excel reports aren't available
 
 ---
 
-## Recommended release layout
+### Linux
 
-The release folder name is:
+You need Python 3.11 and FFprobe installed on the system.
 
-```text
-MediaCatalog_2.1.2
+#### Debian / Ubuntu
+
+Install the base requirements:
+
+```bash
+sudo apt update
+sudo apt install python3 ffmpeg
 ```
 
-A normal installation can look like this:
+Then choose how you want to install XlsxWriter.
 
-```text
-MediaCatalog_2.1.2\
-│   main.py
-│   README.md
-│
-├── ffmpeg\
-│   └── bin\
-│       ├── ffprobe.exe
-│       └── ... required FFmpeg files / DLLs for the selected build
-│
-├── locales\
-│   ├── en-US.json
-│   └── sl-SI.json
-│
-└── modules\
-    │   __init__.py
-    │   application.py
-    │   config.py
-    │   constants.py
-    │   database.py
-    │   datetime_helpers.py
-    │   localization.py
-    │   logger.py
-    │   platform_api.py
-    │   platform_windows.py
-    │   probe.py
-    │   scan.py
-    │   sources.py
-    │   ui.py
-    │
-    └── reports\
-        │   __init__.py
-        │   report_common.py
-        │   report_data.py
-        │   report_excel.py
-        │   report_json.py
-        │   report_service.py
-        └── report_txt.py
+##### System package
+
+Install XlsxWriter system-wide with:
+
+```bash
+sudo apt install python3-xlsxwriter
 ```
 
-The application creates runtime directories when needed.
+Start MediaCatalog with:
+
+```bash
+python3 main.py
+```
+
+##### Virtual environment
+
+If you prefer to keep XlsxWriter inside a virtual environment, install venv support first:
+
+```bash
+sudo apt install python3-venv
+```
+
+Then create and use the environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install XlsxWriter
+python main.py
+```
+
+Activate the environment again each time before starting MediaCatalog:
+
+```bash
+source .venv/bin/activate
+python main.py
+```
+
+Other Linux distributions will be documented once they've been tested.
 
 ---
 
-## Runtime directories and files
+## 3. First Run
 
-### `data/`
-
-Created at startup.
-
-Typical contents:
+A typical MediaCatalog session looks like this:
 
 ```text
-data\
-├── config.json
-├── MediaCatalog.db
-└── backups\                  # created when a database schema backup is required
+Start MediaCatalog
+        ↓
+Add media sources
+        ↓
+Run a scan
+        ↓
+Generate reports
 ```
 
-SQLite may also create temporary/runtime sidecars such as:
+### Release folder
+
+A standard release folder looks like this:
 
 ```text
-MediaCatalog.db-wal
-MediaCatalog.db-shm
+MediaCatalog/
+├── main.py
+├── README.md
+├── locales/
+├── modules/
+└── ffmpeg/        # Windows FFprobe installation
 ```
 
-Do not delete or copy an active database while MediaCatalog is running.
+The runtime folders `data`, `logs`, `reports`, and `pathlists` are created automatically when they're needed.
 
-### `logs/`
-
-Created at startup.
-
-Session logs use names such as:
-
-```text
-MediaCatalog_YYYY-MM-DD_HHMMSS.log
-```
-
-With `full_with_excluded_file`, an additional excluded-file diagnostic can be created:
-
-```text
-MediaCatalog_YYYY-MM-DD_HHMMSS_excluded.txt
-```
-
-### `reports/`
-
-Created when reports are generated.
-
-Reports are grouped by date and operation folder. Example:
-
-```text
-reports\
-└── 2026-10-07\
-    └── 003000_All_Combined\
-        ├── MediaCatalog_All.xlsx
-        ├── MediaCatalog_All.json
-        └── MediaCatalog_All.txt
-```
-
-### `pathlists/`
-
-Created when configured sources are exported.
-
-The standard exported source list is:
-
-```text
-pathlists\media_sources.txt
-```
-
-Import can read a UTF-8 text file selected by the user. Each non-empty source path is normalized and validated before it is accepted.
-
-### `ffmpeg/`
-
-Never auto-created by MediaCatalog. The required FFprobe executable must be supplied by the user/release package.
-
----
-
-## First run
-
-1. Place MediaCatalog in its final folder, for example:
-
-   ```text
-   C:\Tools\MediaCatalog_2.1.2
-   ```
-
-2. Place FFprobe at:
-
-   ```text
-   C:\Tools\MediaCatalog_2.1.2\ffmpeg\bin\ffprobe.exe
-   ```
-
-3. Optionally install XlsxWriter for Excel reports:
-
-   ```powershell
-   py -3 -m pip install XlsxWriter
-   ```
-
-4. Start MediaCatalog:
-
-   ```powershell
-   cd C:\Tools\MediaCatalog_2.1.2
-   py -3 main.py
-   ```
-
-5. Open:
-
-   ```text
-   Configuration -> Paths
-   ```
-
-   and add or import media sources.
-
-6. Run:
-
-   ```text
-   Scan Media -> Start Scan
-   ```
-
-7. Generate reports from:
-
-   ```text
-   Generate Reports
-   ```
-
----
-
-## Main menu
-
-The main application menu contains:
-
-```text
-[1] Scan Media
-[2] Generate Reports
-[3] Configuration
-[4] Exit
-```
-
----
-
-## Configuring media sources
+### Add media sources
 
 Open:
 
@@ -367,66 +204,16 @@ Open:
 Configuration -> Paths
 ```
 
-Available actions:
+You can:
 
 ```text
 Add Source
 Remove Source
-Import Sources From File
-Export Sources To File
+Import Sources from File
+Export Sources to File
 ```
 
-### Supported source forms
-
-MediaCatalog accepts paths such as:
-
-```text
-D:\Media
-\\SERVER\Media
-M:\Movies
-```
-
-Windows Network Shortcut / `.lnk` targets can also be resolved when the target is accessible.
-
-### Canonical source handling
-
-MediaCatalog separates two concepts:
-
-- `config.json` = what the user wants to scan,
-- `MediaCatalog.db` = what MediaCatalog knows about sources and media files.
-
-Resolvable network aliases are normalized to canonical UNC paths. This prevents the same network location from being treated as different sources simply because it was entered as a mapped drive, UNC path, or shortcut.
-
-During add/import and startup normalization MediaCatalog can detect:
-
-- duplicate source aliases,
-- multiple references to the same storage,
-- sources already covered by a selected parent source,
-- unavailable/unresolvable sources.
-
-Unavailable configured sources are retained rather than silently deleted.
-
----
-
-## Importing source lists
-
-Source import reads a UTF-8 text file and treats each non-empty line as a source path.
-
-Example:
-
-```text
-D:\Media\Movies
-E:\Media\TV
-\\SERVER\Media
-```
-
-Import uses the same source resolution, canonicalization, duplicate detection, and overlap rules as manually added sources.
-
-When a batch contains a mixture of valid and invalid/unavailable entries, MediaCatalog shows the batch review before applying the valid result.
-
----
-
-## Scanning
+### Scan media
 
 Open:
 
@@ -434,134 +221,220 @@ Open:
 Scan Media
 ```
 
-Available scan modes:
+For everyday use, choose:
 
 ```text
 Start Scan
+```
+
+### Generate reports
+
+Once a scan has finished, you can generate reports from:
+
+```text
+Generate Reports
+```
+
+---
+
+## 4. Media Sources
+
+You can scan multiple media sources into one catalog.
+
+Sources are normalized, so equivalent paths don't end up cataloged more than once.
+
+When you add or import a source, MediaCatalog can detect:
+
+- duplicate sources
+- equivalent aliases
+- overlapping sources
+- sources already covered by a broader source you selected
+- unavailable sources
+
+If a configured source is temporarily unavailable, it's kept rather than quietly removed.
+
+### Import and Export
+
+You can import a list of sources from a UTF-8 text file.
+
+Every non-empty line is treated as one source:
+
+```text
+/path/to/media
+/path/to/movies
+/path/to/shows
+```
+
+or on Windows:
+
+```text
+D:\Media
+E:\Movies
+\\SERVER\Media
+```
+
+Imported sources go through the same normalization and duplicate detection as ones you add by hand.
+
+Exported source lists are stored under:
+
+```text
+pathlists/
+```
+
+### Windows
+
+These source forms are supported:
+
+```text
+C:\Media
+D:\Movies
+\\SERVER\Media
+M:\Movies
+```
+
+MediaCatalog works with:
+
+- local drives and folders
+- UNC network paths
+- mapped network drives
+- Windows Network Shortcuts
+
+Mapped drives, UNC paths, and supported Network Shortcuts that point to the same network storage are resolved to one canonical network source.
+
+So if several aliases lead to the same share, they won't be treated as separate media libraries.
+
+MediaCatalog also notices when a path you pick is already covered by a broader source.
+
+### Linux
+
+MediaCatalog works with:
+
+- local folders
+- mounted local filesystems
+- CIFS network shares
+- symbolic links
+- relative paths
+- home-directory paths using `~`
+
+Examples:
+
+```text
+/media/storage
+/mnt/media
+~/Media
+./Media
+../Media
+```
+
+Path normalization takes care of redundant separators and trailing slashes.
+
+Symbolic links are resolved to their real target, so the same source doesn't get cataloged twice, once via a symlink and once via its actual path.
+
+Linux paths follow normal POSIX rules and are case-sensitive:
+
+```text
+/home/user/Media
+/home/user/media
+```
+
+If both exist, they're treated as two different paths.
+
+For local mounted filesystems, MediaCatalog uses a stable storage identity where one is available, so a change in device name doesn't make it look like a new storage.
+
+CIFS sources are identified by their network share, not just by where they're mounted locally. This means several mount points that point to the same share are recognized as the same storage.
+
+System-managed automounts also work once the underlying filesystem or network share becomes available.
+
+---
+
+## 5. Scanning
+
+There are two scan modes:
+
+```text
+Normal Scan
 Force Reprobe
 ```
 
-Before a scan starts, MediaCatalog performs preflight checks for:
+Before a scan starts, MediaCatalog checks that your configured sources and FFprobe are available.
 
-- configured source availability,
-- FFprobe availability/version,
-- worker/timeout/retry settings,
-- database status and schema.
-
-If some configured sources are unavailable but at least one source is available, the preflight screen can continue with the available sources.
+Any unavailable sources are shown during this preflight check and are skipped.
 
 ### Normal Scan
 
-Normal Scan is the standard incremental catalog update.
+Normal Scan is the standard mode for keeping your catalog up to date.
 
-It can reuse already-known unchanged media instead of probing every candidate again. New or changed candidates are analyzed with FFprobe, and the catalog is reconciled after a successfully completed source scan.
+For media that hasn't changed, MediaCatalog reuses the metadata it already has instead of probing every file again.
 
-The scan summary includes:
+New or changed media is analyzed with FFprobe.
 
-- files seen,
-- candidates,
-- reused entries,
-- cached non-video entries,
-- files probed,
-- successful probes,
-- failed probes,
-- non-video results,
-- new catalog entries,
-- changed catalog entries,
-- missing catalog entries.
+Files that were previously identified as non-video can also be reused from the cache.
+
+A failed probe isn't saved as successfully cached media, so it can be retried on later scans.
+
+When a scan completes, you'll see statistics such as:
+
+- files seen
+- media candidates
+- reused entries
+- cached non-video entries
+- probed files
+- successful probes
+- failed probes
+- non-video results
+- new entries
+- changed entries
+- missing entries
 
 ### Force Reprobe
 
-Force Reprobe bypasses normal probe reuse for selected media candidates.
+Force Reprobe skips the usual metadata reuse and runs FFprobe on the media candidates again.
 
-Two scopes are available:
+You can choose the scope:
 
 ```text
 All Sources
 Single Source
 ```
 
-Use Force Reprobe when FFprobe has changed, parsing behavior has changed, or existing media metadata should be rebuilt from the source files.
+It's useful when you want to:
+
+- reanalyze media after changing FFmpeg / FFprobe
+- rebuild existing metadata
+- troubleshoot media analysis
+
+### Unavailable sources
+
+If a source goes offline, MediaCatalog won't treat it as a library where every file has suddenly vanished.
+
+This protects your catalog from false mass-missing results caused by disconnected disks, unavailable network shares, mount failures, or permission problems.
+
+### Stopping a scan
+
+While a scan is running:
+
+- the first `Ctrl+C` asks for a graceful stop
+- the second `Ctrl+C` forces an emergency termination
+
+The graceful stop is what you'll want in most cases.
 
 ---
 
-## Scan stop behavior
+## 6. Reports
 
-During an active scan:
-
-- the first `Ctrl+C` requests a graceful stop,
-- the second `Ctrl+C` requests emergency process termination.
-
-The graceful path is designed to stop without treating unfinished work as a successfully completed source scan.
-
-Use the emergency path only when the normal graceful stop cannot complete.
-
----
-
-## FFprobe settings
-
-Open:
+MediaCatalog can generate:
 
 ```text
-Configuration -> FFprobe Settings
-```
-
-Available settings:
-
-### Workers
-
-Default:
-
-```text
-8
-```
-
-UI accepted range:
-
-```text
-1..32
-```
-
-### Timeout
-
-Default:
-
-```text
-30 seconds
-```
-
-### Retries
-
-Default:
-
-```text
-1
-```
-
-Retries are additional attempts, so the default produces a maximum of two attempts for a failing probe.
-
-When editing Workers, Timeout, or Retries, submitting an empty value resets that setting to its factory default.
-
----
-
-## Reports
-
-Open:
-
-```text
-Generate Reports
-```
-
-### Formats
-
-```text
-Excel
+Excel (.xlsx)
 JSON
 TXT
-All Formats
 ```
 
-### Scopes
+or all formats in one go.
+
+### Report scopes
+
+You can create reports for:
 
 ```text
 All Sources - Combined
@@ -569,30 +442,36 @@ All Sources - Separate Files
 Select Source
 ```
 
-Report generation uses a database snapshot so one report operation sees a consistent catalog state.
+### Report location
 
-A source must have suitable completed scan data before normal report generation is allowed. MediaCatalog can also warn when a source is currently unavailable or its latest scan state requires attention.
+Reports are saved under:
 
-### Excel
+```text
+reports/
+```
 
-Excel output requires XlsxWriter.
+and grouped by date and by report operation.
 
-The Excel appearance is configurable in `config.json`, including:
+Example:
 
-- font name,
-- global maximum column width,
-- header colors,
-- zebra-row colors,
-- summary section colors,
-- border color.
+```text
+reports/
+└── 2026-10-07/
+    └── 065122_All_Combined/
+        ├── MediaCatalog_All.xlsx
+        ├── MediaCatalog_All.json
+        └── MediaCatalog_All.txt
+```
 
-### JSON and TXT
+Excel output requires XlsxWriter. Installation is covered in **Requirements & Installation**.
 
-JSON and TXT use only the Python standard library and remain available without XlsxWriter.
+JSON and TXT reports don't require XlsxWriter.
 
 ---
 
-## Language
+## 7. Settings
+
+### Language
 
 Open:
 
@@ -600,384 +479,197 @@ Open:
 Configuration -> Language
 ```
 
-Bundled locales:
+MediaCatalog 3.0.2 ships with:
 
 ```text
 en-US  English
 sl-SI  Slovenščina
 ```
 
-`en-US.json` is the canonical locale definition. Other locale files are validated against the canonical key set.
+English (`en-US`) is the fallback locale.
 
-The selected locale is stored in `data/config.json`.
+### Community translations
+
+You can add more locale files, and you don't have to translate every UI string.
+
+A community translation can include just the strings the translator wants to cover. Anything missing falls back to English.
+
+That means you can build and test a translation step by step instead of translating the whole app up front.
+
+A compatible locale can be:
+
+- kept locally in the `locales/` folder
+- shared with the project, so it may be included in a future MediaCatalog release
+
+When you create a locale, keep the existing key structure and translate only the values, not the keys.
+
+Community translations are very welcome, and they don't have to be complete to be useful.
+
+### FFprobe settings
+
+Open:
+
+```text
+Configuration -> FFprobe Settings
+```
+
+You can adjust the following:
+
+#### Workers
+
+Sets how many FFprobe workers run in parallel.
+
+Default:
+
+```text
+8
+```
+
+Accepted range:
+
+```text
+1..32
+```
+
+#### Timeout
+
+Sets how long a single FFprobe attempt may run.
+
+Default:
+
+```text
+30 seconds
+```
+
+#### Retries
+
+Sets how many extra attempts are made after a failed probe.
+
+Default:
+
+```text
+1
+```
+
+With the default, a failing probe is tried at most twice.
 
 ---
 
-## Configuration file
+## 8. Logging
 
-The configuration file is:
-
-```text
-data\config.json
-```
-
-Current schema:
+Session logs are written to:
 
 ```text
-ConfigSchemaVersion = 4
+logs/
 ```
 
-A default v2.1.2 configuration contains the following structure:
-
-```json
-{
-  "ConfigSchemaVersion": 4,
-  "locale": "en-US",
-  "sources": [],
-  "scan": {
-    "workers": 8,
-    "timeout_seconds": 30,
-    "retries": 1,
-    "queue_capacity": 256,
-    "progress_refresh_seconds": 0.5,
-    "follow_reparse_points": false,
-    "excluded_directories": [],
-    "excluded_non_video_extensions": []
-  },
-  "logging": {
-    "level": "normal"
-  },
-  "excel": {
-    "max_width_global": 80,
-    "font_name": "Arial",
-    "theme": {
-      "header_background": "#1F4E78",
-      "header_text": "#FFFFFF",
-      "zebra_a_background": "#F2F2F2",
-      "zebra_a_text": "#000000",
-      "zebra_b_background": "#FFFFFF",
-      "zebra_b_text": "#000000",
-      "summary_section_fill": "#D9EAF7",
-      "summary_section_text": "#000000",
-      "border": "#D9D9D9"
-    }
-  }
-}
-```
-
-> Note: the real generated default `excluded_non_video_extensions` list is populated with MediaCatalog's built-in non-video extensions. The shortened example above shows the schema shape rather than reproducing the complete default list.
-
-### Strict schema validation
-
-v2.1.2 validates `config.json` strictly.
-
-The following make the configuration invalid:
-
-- unknown keys,
-- misspelled keys,
-- missing required keys,
-- invalid value types,
-- unsupported schema version,
-- structurally invalid sections.
-
-When an invalid configuration is detected:
-
-1. the original file is preserved as a timestamped backup such as:
-
-   ```text
-   config.invalid_YYYY-MM-DD_HHMMSS.json
-   ```
-
-2. a fresh default configuration is created,
-3. if the complete `sources` block is structurally valid, that entire source list is salvaged,
-4. partial source salvage is not performed.
-
----
-
-## Startup source normalization
-
-Before the database is synchronized, MediaCatalog normalizes configured sources.
-
-The startup process can:
-
-- resolve mapped drives,
-- resolve Windows Network Shortcuts,
-- canonicalize network storage to UNC,
-- remove verified duplicates,
-- collapse verified nested sources already covered by a parent source,
-- retain currently unavailable or unresolvable configured sources.
-
-If normalization changes the configured source list, the normalized configuration is saved.
-
----
-
-## Database
-
-The catalog database is:
-
-```text
-data\MediaCatalog.db
-```
-
-MediaCatalog uses SQLite and WAL journal mode.
-
-The database stores source/storage identities, scan history, media-file catalog state, stream metadata, probe errors, cached non-video identities, and related catalog information.
-
-Do not manually edit the database unless you are intentionally performing database-level maintenance and have a backup.
-
-### Database corruption recovery
-
-MediaCatalog only enters automatic corruption recovery for confirmed SQLite corruption conditions.
-
-When confirmed corruption is detected, MediaCatalog preserves the invalid database and any available WAL/SHM recovery evidence before creating a replacement database.
-
-Files are preserved with timestamped invalid names.
-
-Ordinary access, permission, or locking failures are **not** silently treated as database corruption.
-
-### Schema migration backups
-
-When a supported database schema migration requires a backup, MediaCatalog creates a pre-migration database backup under:
-
-```text
-data\backups\
-```
-
-Migration is aborted if the required backup cannot be created successfully.
-
----
-
-## Logging
-
-Logs are stored under:
-
-```text
-logs\
-```
-
-The logging level is controlled by:
-
-```json
-"logging": {
-  "level": "normal"
-}
-```
-
-Supported levels are:
+The available logging levels are:
 
 ### `error_only`
 
-Minimal diagnostic logging.
-
-Keeps warnings, errors, critical failures, and mandatory INFO context needed to identify the session and operation, including:
-
-- session/build identity,
-- Python/OS/architecture/CWD,
-- startup health,
-- dependency health,
-- scan/report operation start and finish,
-- recovery and interrupt events,
-- session end status.
-
-Routine UI navigation and detailed successful-operation noise are filtered out.
+Minimal logging, mostly for warnings, failures, and essential session info.
 
 ### `normal`
 
-Default level.
+The default level.
 
-Includes enough information to reconstruct a normal application session, including:
-
-- environment/build details,
-- config/locale/database state,
-- dependency state,
-- source synchronization,
-- semantic UI selections,
-- preflight,
-- scan/report summaries,
-- final per-source scan results,
-- settings changes,
-- interrupts and shutdown status.
+Records regular app activity, with enough detail to review scans, reports, source handling, and app state.
 
 ### `full`
 
-Includes `normal` plus detailed diagnostic events such as:
+Detailed diagnostic logging.
 
-- source-resolution details,
-- mapped-drive / shortcut / UNC matching,
-- overlap and deduplication reasoning,
-- detailed exclusions,
-- FFprobe retries,
-- HDR diagnostic passes,
-- invalid UI input,
-- other DEBUG-level details.
+Use it when you're digging into source resolution, scanning, FFprobe failures, path handling, or anything else that behaves unexpectedly.
 
 ### `full_with_excluded_file`
 
-Same as `full`, plus a separate file containing every extension-excluded file, grouped by source and extension.
+Everything `full` logs, plus a separate diagnostic file listing the files that were excluded by extension.
 
-Excluded file paths are kept out of the main session log so the primary diagnostic timeline remains readable.
+Use it when you need to see exactly which files were skipped while media was being enumerated.
+
+For most people:
+
+```text
+normal
+```
+
+is the recommended setting.
+
+Logging level is stored in:
+
+```text
+data/config.json
+```
+
+Look for:
+
+```json
+"logging": {
+    "level": "normal"
+}
+```
+
+Change the `level` value to one of:
+
+```text
+error_only
+normal
+full
+full_with_excluded_file
+```
 
 ---
 
-## FFprobe version information
+## 9. Troubleshooting
 
-On fresh FFprobe validation the log records:
+### Windows
 
-```text
-[FFPROBE] Path=...
-[FFPROBE] Short version=...
-[FFPROBE] Full version=...
-[FFPROBE] SHA-256=...
-```
+#### FFprobe not found
 
-`Short version` is intended for compact display.
+Check that the FFprobe layout matches the Windows setup described in **Requirements & Installation**.
 
-`Full version` is the complete first line returned by:
+### Linux
 
-```powershell
+#### FFprobe not found
+
+Check:
+
+```bash
 ffprobe -version
 ```
 
-MediaCatalog also records an FFprobe SHA-256 hash after validation.
+If FFprobe isn't available, install it as described in **Requirements & Installation**.
 
----
+#### CIFS source unavailable
 
-## Build fingerprint
+Make sure the share is mounted and accessible outside MediaCatalog.
 
-Every MediaCatalog session records a deterministic SHA-256 build fingerprint.
+For example:
 
-The fingerprint is calculated from the application code and locale files:
-
-```text
-main.py
-modules/**/*.py
-locales/*.json
+```bash
+ls /mnt/media
 ```
 
-This allows logs from different candidate/release builds to be distinguished even when the visible version string is identical.
+If the path is managed by systemd automount, accessing it may trigger the CIFS mount behind it.
+
+#### Permission denied
+
+Make sure the user running MediaCatalog can read and traverse the entire media source.
+
+MediaCatalog treats inaccessible sources as unavailable, rather than marking all media from that source as missing.
 
 ---
 
-## Single-instance behavior
+## 10. Release Notes — v3.0.2
 
-MediaCatalog uses a Windows global mutex to prevent multiple application instances from using the same runtime at the same time.
+MediaCatalog 3.0.2 adds Linux support alongside Windows.
 
-If the global instance lock cannot be acquired because another MediaCatalog instance is already active, the second instance is not allowed to continue normally.
+### Highlights
 
----
+- Added Linux platform support
+- Added Linux local filesystem, CIFS, symlink, and automount handling
+- Improved cross-platform source identity and path normalization
+- Preserved Windows mapped-drive, UNC, and Network Shortcut handling
+- Validated Normal Scan, Force Reprobe, cache reuse, unavailable-source protection, restart persistence, and report generation on Windows and Linux
 
-## Updating an existing v2.1.x installation
-
-When moving an existing tested v2.1.x catalog into a new release folder:
-
-1. close MediaCatalog completely,
-2. keep a backup of the old installation,
-3. copy the existing:
-
-   ```text
-   data\config.json
-   data\MediaCatalog.db
-   ```
-
-   and, if present and intentionally being preserved during a direct database move, its SQLite sidecars only while the application is fully stopped,
-4. copy/reuse the required `ffmpeg\bin` installation,
-5. start the new release and review the startup log before deleting the old installation.
-
-For upgrades from substantially older or unrelated schemas, preserve the original installation and validate the migration path before replacing it.
-
----
-
-## Git / development notes
-
-Runtime state should not be committed to source control.
-
-The repository `.gitignore` should normally exclude:
-
-- `data/`,
-- `logs/`,
-- `reports/`,
-- `pathlists/`,
-- `ffmpeg/`,
-- `__pycache__/` and `*.pyc`,
-- local virtual environments,
-- IDE/editor metadata,
-- generated release archives and temporary files.
-
-The application source, locale files, README, and `.gitignore` should remain tracked.
-
----
-
-## Troubleshooting
-
-### FFprobe not found
-
-Verify that this exists:
-
-```text
-MediaCatalog_2.1.2\ffmpeg\bin\ffprobe.exe
-```
-
-If using a DLL-based FFmpeg build, verify the required DLLs are also present in the same distribution layout.
-
-### Excel output unavailable
-
-Install XlsxWriter:
-
-```powershell
-py -3 -m pip install XlsxWriter
-```
-
-Then select Excel output again and use MediaCatalog's dependency re-check.
-
-### Source appears more than once through mapped drive and UNC
-
-Use the normal source Add/Import flow. MediaCatalog resolves known aliases and stores network sources canonically so equivalent aliases can be deduplicated.
-
-### Source is offline at startup
-
-An unavailable configured source is retained. MediaCatalog does not automatically remove it merely because it cannot currently be resolved or accessed.
-
-### Invalid `config.json`
-
-Check `data/` for the timestamped `config.invalid_*.json` backup. MediaCatalog creates a clean default configuration and salvages the complete sources list only when that block is structurally valid.
-
-### Database corruption recovery occurred
-
-Do not immediately delete the preserved invalid database/WAL/SHM files. They are intentionally retained as recovery evidence. Review the session log first.
-
-### Need a deeper diagnostic log
-
-Change:
-
-```json
-"logging": {
-  "level": "full"
-}
-```
-
-For extension-excluded file paths as a separate diagnostic file, use:
-
-```json
-"logging": {
-  "level": "full_with_excluded_file"
-}
-```
-
----
-
-## Release status
-
-**MediaCatalog 2.1.2**
-
-The focused v2.1.2 acceptance covered:
-
-- FFprobe short/full version logging,
-- Normal multi-source scan,
-- Force Reprobe All,
-- Force Reprobe Single Source,
-- append-only completed-source rendering,
-- removal of terminal whitespace accumulation,
-- expected scan result counters and normal session shutdown.
-
-The wider v2.1.x behavior is inherited from the previously accepted modular release line.
-
+MediaCatalog 3.0.2 passed the final Windows and Linux regression testing performed for this release.

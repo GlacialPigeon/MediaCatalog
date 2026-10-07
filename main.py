@@ -14,6 +14,12 @@ def main() -> int:
         from modules.platform_windows import WindowsPlatform
         platform = WindowsPlatform()
         return run_application(platform)
+
+    if sys.platform.startswith("linux"):
+        from modules.platform_linux import LinuxPlatform
+        platform = LinuxPlatform()
+        return run_application(platform)
+
     return 1
 
 
